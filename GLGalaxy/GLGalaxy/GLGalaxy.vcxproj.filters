@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Galaxy">
+      <UniqueIdentifier>{f8899c68-0eda-4845-bc1c-db1acde05fa5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Galaxy">
+      <UniqueIdentifier>{9ee6d874-25e6-4311-acb1-4da50e25e174}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Galaxy\Core">
+      <UniqueIdentifier>{25b3230f-77e6-4106-9ade-3c84e93f5a8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Galaxy\Core">
+      <UniqueIdentifier>{0cd46f4f-e89c-4e13-9531-d26b9367e848}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Galaxy\Core\Context.h">
+      <Filter>Header Files\Galaxy\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\stdafx.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Galaxy\Galaxy.h">
+      <Filter>Header Files\Galaxy</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Galaxy\Core\IO.h">
+      <Filter>Header Files\Galaxy\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Galaxy\Core\Core.h">
+      <Filter>Header Files\Galaxy\Core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Galaxy\Core\Context.cpp">
+      <Filter>Source Files\Galaxy\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Galaxy\GLGalaxy.cpp">
+      <Filter>Source Files\Galaxy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Galaxy\Galaxy.cpp">
+      <Filter>Source Files\Galaxy</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Galaxy\Core\IO.cpp">
+      <Filter>Source Files\Galaxy\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Galaxy\Core\Core.cpp">
+      <Filter>Source Files\Galaxy\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
