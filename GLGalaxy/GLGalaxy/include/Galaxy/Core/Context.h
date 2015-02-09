@@ -16,7 +16,7 @@ public:
 	void open(int w = 640, int h = 480);
 	GLFWwindow* getWindow();
 	void refresh();
-	bool closed();
+	bool closing();
 	void close();
 	~Context();
 };

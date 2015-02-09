@@ -62,6 +62,11 @@ void Context::open(int w, int h) {
 
 void Context::refresh()
 {
+	if (closing())
+	{
+		close();
+		return;
+	}
 	float ratio;
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
@@ -99,7 +104,7 @@ void Context::close()
 	glfwTerminate();
 }
 
-bool Context::closed()
+bool Context::closing()
 {
 	if (glfwWindowShouldClose(m_window))
 	{
