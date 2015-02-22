@@ -52,7 +52,7 @@ glm::mat4 IO::read_input()
 	glfwSetCursorPos(m_window, width/2, height/2);
 
 	// Compute new orientation
-	horizontalAngle += mouseSpeed * double(width/2 - xpos);
+	horizontalAngle -= mouseSpeed * double(width/2 - xpos);
 	verticalAngle += mouseSpeed * double(height/2 - ypos);
 
 	std::cout << horizontalAngle << std::endl;
@@ -77,19 +77,19 @@ glm::mat4 IO::read_input()
 	glm::vec3 up = glm::cross(right, direction);
 
 	// Move forward
-	if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS){
+	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS){
 		position += direction * deltaTime * speed;
 	}
 	// Move backward
-	if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS){
+	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS){
 		position -= direction * deltaTime * speed;
 	}
 	// Strafe right
-	if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS){
 		position += right * deltaTime * speed;
 	}
 	// Strafe left
-	if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS){
+	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS){
 		position -= right * deltaTime * speed;
 	}
 

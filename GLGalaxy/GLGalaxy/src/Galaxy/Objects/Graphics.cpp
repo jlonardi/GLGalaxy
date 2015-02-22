@@ -7,21 +7,6 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtx/transform.hpp>
 
-struct Particle{
-	glm::vec3 pos, speed;
-	unsigned char r, g, b, a; // Color
-	float size, angle, weight;
-	float life; // Remaining life of the particle. if <0 : dead and unused.
-	float cameradistance; // *Squared* distance to the camera. if dead : -1.0f
-
-	bool operator<(const Particle& that) const {
-		// Sort in reverse order : far particles drawn first.
-		return this->cameradistance > that.cameradistance;
-	}
-};
-
-const int MaxParticles = 1;
-Particle ParticlesContainer[MaxParticles];
 
 Graphics::Graphics() : m_context()
 {
@@ -30,40 +15,24 @@ Graphics::Graphics() : m_context()
 	m_context.open();
 
 	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.0f, 0.5f, 0.0f, 0.0f);
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
 
+	// Enable blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	GLfloat data[] = {
-		-1.0f, -1.0f, 0.0f,
-		-1.0f, 1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		-1.0f, 1.0f, 0.0f,
-		1.0f, -1.0f, 0.0f,
-		1.0f, 1.0f, 0.0f
-	};
+	load_texture();
 
-	max_particles = 1;
-
-	std::copy(data, data + 18, g_vertex_buffer_data);
-
-	GLfloat UVdata[] = {
-		0.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f,
-		0.0f, 1.0f,
-		1.0f, 0.0f,
-		1.0f, 1.0f
-	};
-
-	std::copy(UVdata, UVdata + 12, g_uv_buffer_data);
-
-	g_particule_position_size_data = new GLfloat[max_particles * 4];
-	g_particule_color_data = new GLubyte[max_particles * 4];
+	for (int i = 0; i < 3; i++)
+	{
+		Star star(Texture);
+		stars.push_back(star);
+	}
 };
 
 GLFWwindow* Graphics::getWindow()
@@ -75,12 +44,6 @@ void Graphics::stop()
 {
 	m_context.close();
 };
-
-void Graphics::init()
-{
-
-};
-
 
 GLuint Graphics::load_shaders(const std::string vertex_file_path, const std::string fragment_file_path)
 {
@@ -181,12 +144,7 @@ GLuint Graphics::load_shaders(const std::string vertex_file_path, const std::str
 
 void Graphics::initialize_shaders()
 {
-	// Vertex shader
-	CameraRight_worldspace_ID = glGetUniformLocation(ProgramID, "CameraRight_worldspace");
-	CameraUp_worldspace_ID = glGetUniformLocation(ProgramID, "CameraUp_worldspace");
-	ViewProjMatrixID = glGetUniformLocation(ProgramID, "VP");
-
-	// fragment shader
+	MatrixID = glGetUniformLocation(ProgramID, "MVP");
 	TextureID = glGetUniformLocation(ProgramID, "myTextureSampler");
 }
 
@@ -208,87 +166,69 @@ void Graphics::load_texture()
 	}
 }
 
-void Graphics::load_data()
-{
-	vertexbuffer;
-	glGenBuffers(1, &vertexbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
-
-	uvbuffer;
-	glGenBuffers(1, &uvbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(g_uv_buffer_data), g_uv_buffer_data, GL_STATIC_DRAW);
-
-}
 
 void Graphics::render(glm::mat4& Camera)
 {
 	// Clear the screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-	glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-	// Camera matrix
-	glm::mat4 View = glm::lookAt(
-		glm::vec3(0, 0, 6), // Camera is at (4,3,3), in World Space
-		glm::vec3(0, 0, 0), // and looks at the origin
-		glm::vec3(0, 1, 0)  // Head is up (set to 0,-1,0 to look upside-down)
-		);
+	std::vector<Star>::iterator iter;
 
+	for (iter = stars.begin(); iter != stars.end(); iter++)
+	{
 
-	// Model matrix : an identity matrix (model will be at the origin)
-	glm::mat4 Model = glm::mat4(1.0f) * glm::scale(0.5f, 0.5f, 0.5f);  // Changes for each model !
+		Star star = *iter;
 
-	// Our ModelViewProjection : multiplication of our 3 matrices
-	glm::mat4 MVP = Projection * Camera * Model; // Remember, matrix multiplication is the other way around
+		// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
+		glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
 
-	// Get a handle for our "MVP" uniform
-	GLuint MatrixID = glGetUniformLocation(ProgramID, "MVP");
+		// Our ModelViewProjection : multiplication of our 3 matrices
+		glm::mat4 MVP = Projection * Camera * star.model; // Remember, matrix multiplication is the other way around
 
-	// Use our shader
-	glUseProgram(ProgramID);
+		// Use our shader
+		glUseProgram(ProgramID);
 
-	// Send our transformation to the currently bound shader, 
-	// in the "MVP" uniform
-	glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+		// Send our transformation to the currently bound shader, 
+		// in the "MVP" uniform
+		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-	// Bind our texture in Texture Unit 0
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, Texture);
-	// Set our "myTextureSampler" sampler to user Texture Unit 0
-	glUniform1i(TextureID, 0);
+		// Bind our texture in Texture Unit 0
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, star.texture);
+		// Set our "myTextureSampler" sampler to user Texture Unit 0
+		glUniform1i(TextureID, 0);
 
-	// 1rst attribute buffer : vertices
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(
-		0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
-		3,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-		);
+		// 1rst attribute buffer : vertices
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, star.vertexbuffer);
+		glVertexAttribPointer(
+			0,                  // attribute. No particular reason for 0, but must match the layout in the shader.
+			3,                  // size
+			GL_FLOAT,           // type
+			GL_FALSE,           // normalized?
+			0,                  // stride
+			(void*)0            // array buffer offset
+			);
 
-	// 2nd attribute buffer : UVs
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glVertexAttribPointer(
-		1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
-		2,                                // size : U+V => 2
-		GL_FLOAT,                         // type
-		GL_FALSE,                         // normalized?
-		0,                                // stride
-		(void*)0                          // array buffer offset
-		);
+		// 2nd attribute buffer : UVs
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, star.uvbuffer);
+		glVertexAttribPointer(
+			1,                                // attribute. No particular reason for 1, but must match the layout in the shader.
+			2,                                // size : U+V => 2
+			GL_FLOAT,                         // type
+			GL_FALSE,                         // normalized?
+			0,                                // stride
+			(void*)0                          // array buffer offset
+			);
 
-	// Draw the triangle !
-	glDrawArrays(GL_TRIANGLES, 0, 2*3); // 12*3 indices starting at 0 -> 12 triangles
+		// Draw the triangle !
+		glDrawArrays(GL_TRIANGLES, 0, 2 * 3); // 12*3 indices starting at 0 -> 12 triangles
 
-	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
 
+	}
 	// Swap buffers
 	glfwSwapBuffers(m_context.getWindow());
 };

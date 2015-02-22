@@ -13,8 +13,6 @@ void Core::initialize()
 	io = IO(m_graphics.getWindow());
 	m_graphics.load_shaders("shaders/star.vertexshader", "shaders/star.fragmentshader");
 	m_graphics.initialize_shaders();
-	m_graphics.load_texture();
-	m_graphics.load_data();
 }
 
 void Core::handle_input()

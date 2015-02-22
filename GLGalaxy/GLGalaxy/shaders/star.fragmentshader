@@ -4,7 +4,7 @@
 in vec2 UV;
  
 // Ouput data
-out vec3 color;
+out vec4 color;
  
 // Values that stay constant for the whole mesh.
 uniform sampler2D myTextureSampler;
@@ -12,7 +12,11 @@ uniform sampler2D myTextureSampler;
 void main(){
  
     // Output color = color of the texture at the specified UV
-	vec3 cl = texture( myTextureSampler, UV ).rgb;
+	vec3 rgb = texture( myTextureSampler, UV ).rgb;
+	
+	float alpha = length(rgb) - 0.5;
+	
 	vec3 gamma = vec3(2.2);
-	color = vec3(pow(cl, gamma)); // gamma correction
+	color.rgb = vec3(pow(rgb, gamma)); // gamma correction
+	color.a = alpha;
 }
