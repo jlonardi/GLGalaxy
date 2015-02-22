@@ -21,6 +21,12 @@
     <Filter Include="Header Files\Galaxy\Core">
       <UniqueIdentifier>{0cd46f4f-e89c-4e13-9531-d26b9367e848}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Galaxy\Objects">
+      <UniqueIdentifier>{cc4a6d8b-3eea-4766-9eda-56c8411e0317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Galaxy\Objects">
+      <UniqueIdentifier>{8ef89c8d-3efd-4c16-866b-a2bca3edc50f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Galaxy\Core\Context.h">
@@ -36,6 +42,12 @@
       <Filter>Header Files\Galaxy\Core</Filter>
     </ClInclude>
     <ClInclude Include="include\Galaxy\Core\Core.h">
+      <Filter>Header Files\Galaxy\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Galaxy\Objects\Star.h">
+      <Filter>Header Files\Galaxy\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Galaxy\Core\Graphics.h">
       <Filter>Header Files\Galaxy\Core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -57,6 +69,12 @@
     </ClCompile>
     <ClCompile Include="src\stdafx.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Galaxy\Objects\Star.cpp">
+      <Filter>Source Files\Galaxy\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Galaxy\Objects\Graphics.cpp">
+      <Filter>Source Files\Galaxy\Core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

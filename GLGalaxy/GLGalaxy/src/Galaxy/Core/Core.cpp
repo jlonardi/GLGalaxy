@@ -1,32 +1,25 @@
 #include "stdafx.h"
 #include "Galaxy/Core/Core.h"
-#include "Galaxy/Core/Context.h"
 
-
-Core::Core() : m_context(), m_running(true)
+Core::Core() : m_graphics(), m_running(true), m_camera()
 {
 }
 
 
 void Core::initialize()
 {
-	std::cout << "Initializing application window." << std::endl;
-	m_context.initialize();
+	std::cout << "Initializing core." << std::endl;
 
-	std::cout << "Opening application window." << std::endl;
-	m_context.open();
-	io = IO(m_context.getWindow());
+	io = IO(m_graphics.getWindow());
+	m_graphics.load_shaders("shaders/star.vertexshader", "shaders/star.fragmentshader");
+	m_graphics.initialize_shaders();
+	m_graphics.load_texture();
+	m_graphics.load_data();
 }
 
 void Core::handle_input()
 {
-	Key::key key = io.read_input();
-
-	if (key == Key::ESC) {
-		std::cout << "Context was closed.. exiting" << std::endl;
-		m_context.close();
-		m_running = false;
-	}
+	m_camera = io.read_input();
 }
 
 void Core::update()
@@ -36,7 +29,7 @@ void Core::update()
 
 void Core::render()
 {
-	m_context.refresh();
+	m_graphics.render(m_camera);
 }
 
 bool Core::running()

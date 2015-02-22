@@ -1,13 +1,16 @@
 #pragma once
-#include "Galaxy/Core/Context.h"
 #include "Galaxy/Core/IO.h"
+#include "Galaxy/Core/Graphics.h"
+#include "Galaxy/Objects/Star.h"
 
 class Core
 {
 private:
-	Context m_context;
 	IO io;
+	Graphics m_graphics;
+	std::vector<Star> stars;
 	bool m_running;
+	glm::mat4 m_camera;
 public:
 	Core();
 	void initialize();
